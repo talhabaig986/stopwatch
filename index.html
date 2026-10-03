@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* اس سے باڈی کی غیر ضروری سکرول بار ختم ہو جائے گی */
+        }
+
+        .main-container {
+            background: #1a1a1a;
+            padding: 18px;
+            border-radius: 16px;
+            text-align: center;
+            width: 280px;
+            border: 2px solid #333;
+        }
+
+        h2 {
+            color: #fbbf24;
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .circle-watch {
+            width: 140px;
+            height: 140px;
+            border: 4px solid #333;
+            border-top: 4px solid #fbbf24;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 12px auto;
+            background: #0d0d0d;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0;
+            color: #fff;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            font-size: 13px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        #start { background: #059669; }
+        #store { background: #d97706; }
+        #stop { background: #dc2626; }
+        #clear { background: #4b5563; }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        li {
+            background: #141414;
+            margin: 3px 0;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            border-left: 3px solid #fbbf24;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <h2>Stopwatch</h2>
+
+        <div class="circle-watch">
+            <h1 id="timer">00:00:00</h1>
+        </div>
+        
+        <div class="btn-group">
+            <button id="start"><i class="fa-solid fa-play"></i></button>
+            <button id="store"><i class="fa-solid fa-flag"></i></button>
+            <button id="stop"><i class="fa-solid fa-pause"></i></button>
+            <button id="clear"><i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+
+        <ul id="listlap"></ul>
+    </div>
+
+    <script>
+        let start = document.getElementById("start")
+        let store = document.getElementById("store")
+        let stop = document.getElementById("stop")
+        let clear = document.getElementById("clear")
+        let display = document.getElementById("timer")
+        let ul = document.getElementById("listlap")
+        let second = 0;
+        let timer = null;
+        let array = [];
+
+        store.addEventListener("click", function () {
+            array.push(display.innerText)
+            ul.innerHTML = ""
+            for (var value of array) {
+                ul.innerHTML += `<li><span>Lap</span> <span>${value}</span></li>`
+            }
+            if (array.length == 5) {
+                second = 0;
+                clearInterval(timer)
+                start.disabled = false
+                array = []
+                store.disabled = true
+                display.innerText = "00:00:00"
+            }
+        })
+
+        clear.addEventListener("click", function () {
+            second = 0;
+            clearInterval(timer)
+            start.disabled = false
+            display.innerText = "00:00:00"
+            array = [];
+            ul.innerHTML = "";
+        })
+
+        start.addEventListener("click", function () {
+            timer = setInterval(() => {
+                store.disabled = false
+                updateTime()
+                start.disabled = true
+            }, 1000)
+        })
+
+        stop.addEventListener("click", function () {
+            clearInterval(timer)
+            start.disabled = false
+        })
+
+        function updateTime() {
+            second = second + 1
+            let hrs = Math.floor(second / 3600);
+            let mins = Math.floor((second % 3600) / 60);
+            let sec = second % 60
+            display.innerText = hrs.toString().padStart(2, "0") + ":" + mins.toString().padStart(2, "0") + ":" + sec.toString().padStart(2, "0")
+        }
+    </script>
+
+</body>
+
+</html>
